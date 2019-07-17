@@ -10,6 +10,8 @@ const tileDownloader = process.env.TILE_DOWNLOADER === 'none'
   : new ImagicoElevationDownloader(tileDirectory)
 const maxPostSize = process.env.MAX_POST_SIZE || "500kb";
 const tiles = new TileSet(tileDirectory, {downloader:tileDownloader});
+const fs = require('fs')
+fs.mkdirSync('data');
 
 module.exports = cors(async (req, res) => {
   if (req.method === 'OPTIONS') {
