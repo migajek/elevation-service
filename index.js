@@ -1,4 +1,5 @@
 const {json, send} = require('micro')
+const cors = require('micro-cors')()
 const addElevation = require('geojson-elevation').addElevation
 const TileSet = require('node-hgt').TileSet
 const ImagicoElevationDownloader = require('node-hgt').ImagicoElevationDownloader
@@ -10,7 +11,11 @@ const tileDownloader = process.env.TILE_DOWNLOADER === 'none'
 const maxPostSize = process.env.MAX_POST_SIZE || "500kb";
 const tiles = new TileSet(tileDirectory, {downloader:tileDownloader});
 
-module.exports = async (req, res) => {
+module.exports = cors(async (req, res) => {
+  if (req.method === 'OPTIONS') {
+	return send(res, 200, 'ok!');
+  }
+  
   if (req.method !== 'POST') {
     return send(res, 405, {error: 'Only POST allowed'})
   }
@@ -29,4 +34,4 @@ module.exports = async (req, res) => {
       resolve(geojson)
     }, noData)
   })
-}
+})
